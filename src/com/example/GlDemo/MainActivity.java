@@ -3,13 +3,18 @@ package com.example.GlDemo;
 import android.app.Activity;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+import java.util.Random;
 
 public class MainActivity extends Activity {
+    private static String TAG = "GlDemo";
 
     private GLSurfaceView glSurfaceView;
+
+    private Random random;
 
     /**
      * Called when the activity is first created.
@@ -18,6 +23,7 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        random=new Random();
         glSurfaceView = new GLSurfaceView(this);
         //OpenGL使用Renderer做类似View的onDraw的事情
         glSurfaceView.setRenderer(new GLSurfaceView.Renderer() {
@@ -34,8 +40,8 @@ public class MainActivity extends Activity {
             @Override
             public void onDrawFrame(GL10 gl10) {
                 //下面两句，颠倒写也没问题，要了解它们的意思，需要查OpenGL
+                gl10.glClearColor(random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat());
                 gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
-                gl10.glClearColor(0.5f, 0.1f, 0.4f, 0.8f);
             }
         });
         this.setContentView(glSurfaceView);
