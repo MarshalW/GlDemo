@@ -23,10 +23,13 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        random=new Random();
+        random = new Random();
         glSurfaceView = new GLSurfaceView(this);
         //OpenGL使用Renderer做类似View的onDraw的事情
         glSurfaceView.setRenderer(new GLSurfaceView.Renderer() {
+
+            private boolean rendered;
+
             @Override
             public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
                 //To change body of implemented methods use File | Settings | File Templates.
@@ -42,8 +45,19 @@ public class MainActivity extends Activity {
                 //下面两句，颠倒写也没问题，要了解它们的意思，需要查OpenGL
                 gl10.glClearColor(random.nextFloat(), random.nextFloat(), random.nextFloat(), random.nextFloat());
                 gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
+
+                if(!rendered){
+                    rendered=true;
+                    Log.d(TAG,"GL render thread: "+Thread.currentThread().toString());
+
+                    if(getMainLooper().getThread()!=Thread.currentThread()){
+                        Log.d(TAG,">>>> render thread is not ui thread!");
+                    }
+                }
             }
         });
         this.setContentView(glSurfaceView);
+
+        Log.d(TAG,"UI thread: "+Thread.currentThread().toString());
     }
 }
