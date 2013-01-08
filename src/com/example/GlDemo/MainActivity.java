@@ -60,9 +60,10 @@ public class MainActivity extends Activity {
                 FloatBuffer triangleBuffer = getNativeOrderFloatBuffer(array);
                 //设置顶点数据
                 gl10.glVertexPointer(2, GL10.GL_FLOAT, 0, triangleBuffer);
-                //画三角形的三个边
-                gl10.glPointSize(10f);
-                gl10.glDrawArrays(GL10.GL_LINE_LOOP, 0, 3);
+                //设置图形颜色
+                gl10.glColor4f(0.5f, 0.5f, 1.0f, 1.0f);
+                //绘制三角形
+                gl10.glDrawArrays(GL10.GL_TRIANGLES, 0, 3);
             }
         });
         //设置为dirty再刷屏
