@@ -3,6 +3,7 @@ package com.example.GlDemo;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -28,28 +29,43 @@ public class SimpleRenderer implements GLSurfaceView.Renderer {
 
     @Override
     public void onSurfaceCreated(GL10 gl10, EGLConfig eglConfig) {
+        this.polygon.loadTexture(gl10, this.context);
+
+        gl10.glEnable(GL10.GL_TEXTURE_2D);
+        gl10.glClearColor(0.0f, 0.0f, 0.0f, 0.5f);
+        gl10.glClearDepthf(1.0f);
+        gl10.glEnable(GL10.GL_DEPTH_TEST);
+        gl10.glDepthFunc(GL10.GL_LEQUAL);
+
+        gl10.glHint(GL10.GL_PERSPECTIVE_CORRECTION_HINT, GL10.GL_NICEST);
     }
 
     @Override
     public void onSurfaceChanged(GL10 gl10, int width, int height) {
         gl10.glViewport(0, 0, width, height);
 
-        //TODO 有关投影方面的知识还需要学习理解，以下代码摘自android文档。
-        float ratio = (float) width / height;
-//        gl10.glMatrixMode(GL10.GL_PROJECTION);        // set matrix to projection mode
-//        gl10.glLoadIdentity();                        // reset the matrix to its default state
-        gl10.glFrustumf(-ratio, ratio, -1, 1, 3, 7);  // apply the projection matrix
+        //重置投影矩阵？
+        gl10.glMatrixMode(GL10.GL_PROJECTION);
+        gl10.glLoadIdentity();
+
+//        float ratio = (float) width / height;//这是原来的变换设置
+//        gl10.glOrthof(-ratio, ratio, -1, 1, 1, 5);
+
+        GLU.gluPerspective(gl10, 45.0f, (float) width / (float) height, 0.1f, 100.0f);
+
+        //重置模型视图矩阵？
+        gl10.glMatrixMode(GL10.GL_MODELVIEW);
+        gl10.glLoadIdentity();
     }
 
     @Override
     public void onDrawFrame(GL10 gl10) {
         //清空底色
-        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT);
+        gl10.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
+        gl10.glLoadIdentity();
 
-//        gl10.glMatrixMode(GL10.GL_MODELVIEW);
-//        gl10.glLoadIdentity();
-
-        GLU.gluLookAt(gl10, 0, 0, -5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+//        GLU.gluLookAt(gl10, 0, 0, -5, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
+        gl10.glTranslatef(0.0f, 0.0f, -6.0f);//和上面效果类似，原理待查
 
         //画多边形
         this.polygon.draw(gl10);
